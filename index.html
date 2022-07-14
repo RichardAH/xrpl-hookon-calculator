@@ -1,109 +1,112 @@
 <html>
+
 <head>
 </head>
+
 <body>
     <center>
         <div id="error"></div>
-        <textarea id="hookon" onchange="recalc()" style="font-size: 2em; text-align: center;">0x0000000000000000</textarea>
+        <textarea id="hookon" onchange="recalc()"
+            style="font-size: 2em; text-align: center;">0x000000003e3ff5bf</textarea>
         <br />
-    <script>
-    const tts = {
-        ttPAYMENT: 0,
-        ttESCROW_CREATE: 1,
-        ttESCROW_FINISH: 2,
-        ttACCOUNT_SET: 3,
-        ttESCROW_CANCEL: 4,
-        ttREGULAR_KEY_SET: 5,
-        ttOFFER_CREATE: 7,
-        ttOFFER_CANCEL: 8,
-        ttTICKET_CREATE: 10,
-        ttSIGNER_LIST_SET: 12,
-        ttPAYCHAN_CREATE: 13,
-        ttPAYCHAN_FUND: 14,
-        ttPAYCHAN_CLAIM: 15,
-        ttCHECK_CREATE: 16,
-        ttCHECK_CASH: 17,
-        ttCHECK_CANCEL: 18,
-        ttDEPOSIT_PREAUTH: 19,
-        ttTRUST_SET: 20,
-        ttACCOUNT_DELETE: 21,
-        ttHOOK_SET: 22
-    };
+        <script>
+            const tts = {
+                ttPAYMENT: 0,
+                ttESCROW_CREATE: 1,
+                ttESCROW_FINISH: 2,
+                ttACCOUNT_SET: 3,
+                ttESCROW_CANCEL: 4,
+                ttREGULAR_KEY_SET: 5,
+                ttOFFER_CREATE: 7,
+                ttOFFER_CANCEL: 8,
+                ttTICKET_CREATE: 10,
+                ttSIGNER_LIST_SET: 12,
+                ttPAYCHAN_CREATE: 13,
+                ttPAYCHAN_FUND: 14,
+                ttPAYCHAN_CLAIM: 15,
+                ttCHECK_CREATE: 16,
+                ttCHECK_CASH: 17,
+                ttCHECK_CANCEL: 18,
+                ttDEPOSIT_PREAUTH: 19,
+                ttTRUST_SET: 20,
+                ttACCOUNT_DELETE: 21,
+                ttHOOK_SET: 22,
+                ttNFTOKEN_MINT: 25,
+                ttNFTOKEN_BURN: 26,
+                ttNFTOKEN_CREATE_OFFER: 27,
+                ttNFTOKEN_CANCEL_OFFER: 28,
+                ttNFTOKEN_ACCEPT_OFFER: 29
+            };
 
-    const keys_ordered = Object.keys(tts).sort();
+            const keys_ordered = Object.keys(tts).sort();
 
-    document.write('<table>')
-    for (let i in keys_ordered)
-    {
-        let k = keys_ordered[i];
-        let n = tts[k];
+            document.write('<table>')
+            for (let i in keys_ordered) {
+                let k = keys_ordered[i];
+                let n = tts[k];
 
-            document.write('<tr><td>');
-            document.write('<button onclick="xor(' + n + 'n);">' + k.substr(2) + '</button></td><td>');
-        let trigger = n != 22;
-            document.write('<div style="display:inline-block; text-align:right" id="status'+n+'"' +
-                '><font color=' + (trigger ? 'lime' : 'red') + '>' +      
-                (trigger ? 'Trigger' : 'Ignore') + '</font></div>')
-            document.write('</div></td><tr>')
-    }
+                document.write('<tr><td>');
+                document.write('<button onclick="xor(' + n + 'n);">' + k.substr(2) + '</button></td><td>');
+                let trigger = n != 22;
+                document.write('<div style="display:inline-block; text-align:right" id="status' + n + '"' +
+                    '><font color=' + (trigger ? 'lime' : 'red') + '>' +
+                    (trigger ? 'Trigger' : 'Ignore') + '</font></div>')
+                document.write('</div></td><tr>')
+            }
 
-    document.write('</table>');
-    function xor(n)
-    {
-            let v = BigInt(document.getElementById('hookon').value)
-            v ^= (1n << n);
-            let s = v.toString(16);
-            let l = s.length;
-            if (l < 16)
-                s = '0'.repeat(16 - l) + s;
-            s = '0x' + s;
-            document.getElementById('hookon').value = s;
-            
-            let trigger = (v & (1n << n));
-            if (n != 22)
-                trigger = !trigger;
+            document.write('</table>');
+            function xor(n) {
+                let v = BigInt(document.getElementById('hookon').value)
+                v ^= (1n << n);
+                let s = v.toString(16);
+                let l = s.length;
+                if (l < 16)
+                    s = '0'.repeat(16 - l) + s;
+                s = '0x' + s;
+                document.getElementById('hookon').value = s;
 
-            document.getElementById('status' + n).innerHTML = '<font color=' + (trigger ? 'lime' : 'red') + '>' +
-                (trigger ? 'Trigger' : 'Ignore') + '</font>';
-    }
-
-    function recalc()
-    {
-        try
-        {
-            let raw = document.getElementById('hookon').value.trim();
-            if (raw.substr(0,2) != '0x')
-                raw = '0x' + raw;
-
-
-            let v = BigInt(raw)
-            let v2 = v;
-
-            for (let n = 0; n < 64; ++n)
-            {
-                let trigger = v & 1n;
+                let trigger = (v & (1n << n));
                 if (n != 22)
                     trigger = !trigger;
 
-                if (document.getElementById('status' + n))
-                    document.getElementById('status' + n).innerHTML = '<font color=' + (trigger ? 'lime' : 'red') + '>' +
-                        (trigger ? 'Trigger' : 'Ignore') + '</font>';
-                v >>= 1n;
+                document.getElementById('status' + n).innerHTML = '<font color=' + (trigger ? 'lime' : 'red') + '>' +
+                    (trigger ? 'Trigger' : 'Ignore') + '</font>';
             }
 
-            let s = v2.toString(16);
-            let l = s.length;
-            if (l < 16)
-                s = '0'.repeat(16 - l) + s;
-            else if (l > 16)
-                s = s.substr(0, 16);
-            s = '0x' + s;
-            document.getElementById('hookon').value = s;
-        } catch (e) {
-            document.getElementById('error').innerHTML = '<div style="font-weight:bold; font-size:2em; color: red;">' + e + '</div>';
-        }
-    }
-</script>
-        </center>
+            function recalc() {
+                try {
+                    let raw = document.getElementById('hookon').value.trim();
+                    if (raw.substr(0, 2) != '0x')
+                        raw = '0x' + raw;
+
+                    let v = BigInt(raw)
+                    let v2 = v;
+
+                    for (let n = 0; n < 64; ++n) {
+                        let trigger = v & 1n;
+                        if (n != 22)
+                            trigger = !trigger;
+
+                        if (document.getElementById('status' + n))
+                            document.getElementById('status' + n).innerHTML = '<font color=' + (trigger ? 'lime' : 'red') + '>' +
+                                (trigger ? 'Trigger' : 'Ignore') + '</font>';
+                        v >>= 1n;
+                    }
+
+                    let s = v2.toString(16);
+                    let l = s.length;
+                    if (l < 16)
+                        s = '0'.repeat(16 - l) + s;
+                    else if (l > 16)
+                        s = s.substr(0, 16);
+                    s = '0x' + s;
+                    document.getElementById('hookon').value = s;
+                } catch (e) {
+                    document.getElementById('error').innerHTML = '<div style="font-weight:bold; font-size:2em; color: red;">' + e + '</div>';
+                }
+            }
+        </script>
+    </center>
 </body>
+
 </html>
