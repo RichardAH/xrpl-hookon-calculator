@@ -4,7 +4,7 @@
 <body>
     <center>
         <div id="error"></div>
-        <textarea id="hookon" onchange="recalc()" style="font-size: 2em; text-align: center;">0x0000000000000000</textarea>
+        <textarea id="hookon" onchange="recalc()" style="width: 22em; height: 3em; font-size: 2em; text-align: center;">0x0000000000000000000000000000000000000000000000000000000000000000</textarea>
         <br />
     <script>
     const tts = {
@@ -27,7 +27,16 @@
         ttDEPOSIT_PREAUTH: 19,
         ttTRUST_SET: 20,
         ttACCOUNT_DELETE: 21,
-        ttHOOK_SET: 22
+        ttHOOK_SET: 22,
+
+        ttURITOKEN_MINT: 45,
+        ttURITOKEN_BURN: 46,
+        ttURITOKEN_BUY: 47,
+        ttURITOKEN_CREATE_SELL_OFFER: 48,
+        ttURITOKEN_CANCEL_SELL_OFFER: 49,
+
+        ttINVOKE: 99
+
     };
 
     const keys_ordered = Object.keys(tts).sort();
@@ -54,8 +63,8 @@
             v ^= (1n << n);
             let s = v.toString(16);
             let l = s.length;
-            if (l < 16)
-                s = '0'.repeat(16 - l) + s;
+            if (l < 64)
+                s = '0'.repeat(64 - l) + s;
             s = '0x' + s;
             document.getElementById('hookon').value = s;
             
@@ -79,7 +88,7 @@
             let v = BigInt(raw)
             let v2 = v;
 
-            for (let n = 0; n < 64; ++n)
+            for (let n = 0; n < 256; ++n)
             {
                 let trigger = v & 1n;
                 if (n != 22)
@@ -93,10 +102,10 @@
 
             let s = v2.toString(16);
             let l = s.length;
-            if (l < 16)
-                s = '0'.repeat(16 - l) + s;
-            else if (l > 16)
-                s = s.substr(0, 16);
+            if (l < 64)
+                s = '0'.repeat(64 - l) + s;
+            else if (l > 64)
+                s = s.substr(0, 64);
             s = '0x' + s;
             document.getElementById('hookon').value = s;
         } catch (e) {
