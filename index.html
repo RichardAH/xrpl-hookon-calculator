@@ -112,7 +112,7 @@
             if (l < 64)
                 s = '0'.repeat(64 - l) + s;
             else if (l > 64)
-                s = s.substr(0, 64);
+                s = s.substring(0, 64);
             s = '0x' + s;
             document.getElementById('hookon').value = s;
         } catch (e) {
